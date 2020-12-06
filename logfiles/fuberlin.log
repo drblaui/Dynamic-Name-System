@@ -1,2 +1,6 @@
 2020-12-06 18:32:50.707597 | fuberlin. | BINDING SOCKET
 2020-12-06 18:32:50.709599 | fuberlin. | WAITING FOR MSGS
+2020-12-06 18:35:50.934762 | fuberlin. | BINDING SOCKET
+2020-12-06 18:35:50.934762 | fuberlin. | WAITING FOR MSGS
+2020-12-06 18:38:36.672712 | fuberlin. | Request received for name hard.homework.fuberlin. from ('127.0.0.10', 53053)
+2020-12-06 18:38:41.676527 | fuberlin. | Sending answer 127.0.0.20 for homework.fuberlin. to ('127.0.0.10', 53053)

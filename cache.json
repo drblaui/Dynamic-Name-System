@@ -1,0 +1,17 @@
+{
+    "fuberlin.": {
+        "A": "127.0.0.19",
+        "TTL": 400,
+        "dieTime": 1607276711
+    },
+    "homework.fuberlin.": {
+        "A": "127.0.0.20",
+        "TTL": 400,
+        "dieTime": 1607276721
+    },
+    "hard.homework.fuberlin.": {
+        "A": "127.0.0.22",
+        "TTL": 3400,
+        "dieTime": 1607279731
+    }
+}
