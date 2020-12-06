@@ -1,0 +1,10 @@
+{
+	"news.router.telematik.": {
+		"A": "127.0.0.17",
+		"TTL": 100
+	},
+	"shop.router.telematik.": {
+		"A": "127.0.0.18",
+		"TTL": 3400
+	}
+}

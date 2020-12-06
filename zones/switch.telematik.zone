@@ -1,0 +1,10 @@
+{
+    "www.switch.telematik.": {
+        "A": "127.0.0.14",
+        "TTL": 800
+    },
+    "mail.switch.telematik.": {
+        "A": "127.0.0.15",
+        "TTL": 800
+    }
+}

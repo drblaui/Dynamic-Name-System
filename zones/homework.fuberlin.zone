@@ -1,0 +1,10 @@
+{
+	"easy.homework.fuberlin.": {
+		"A": "127.0.0.21",
+		"TTL": 3600
+	},
+	"hard.homework.fuberlin.": {
+		"A": "127.0.0.22",
+		"TTL": 3400
+	}
+}

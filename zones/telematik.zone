@@ -1,0 +1,10 @@
+{
+	"switch.telematik.": {
+		"A": "127.0.0.13",
+		"TTL": 400
+	},
+	"router.telematik.": {
+		"A": "127.0.0.16",
+		"TTL": 400
+	}
+}

@@ -1,0 +1,14 @@
+{
+	"linux.pcpools.fuberlin.": {
+		"A": "127.0.0.24",
+		"TTL": 1600
+	},
+	"macos.pcpools.fuberlin.": {
+		"A": "127.0.0.25",
+		"TTL": 345
+	},
+	"windows.pcpools.fuberlin.": {
+		"A": "127.0.0.26",
+		"TTL": 10
+	}
+}

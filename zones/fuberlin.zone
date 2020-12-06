@@ -1,0 +1,10 @@
+{
+	"homework.fuberlin.": {
+		"A": "127.0.0.20",
+		"TTL": 400
+	},
+	"pcpools.fuberlin.": {
+		"A": "127.0.0.23",
+		"TTL": 400
+	}
+}
