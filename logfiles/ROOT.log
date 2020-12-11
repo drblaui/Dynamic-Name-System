@@ -1,6 +1,34 @@
-2020-12-06 18:32:50.708598 | ROOT | BINDING SOCKET
-2020-12-06 18:32:50.709599 | ROOT | WAITING FOR MSGS
-2020-12-06 18:35:50.930759 | ROOT | BINDING SOCKET
-2020-12-06 18:35:50.931759 | ROOT | WAITING FOR MSGS
-2020-12-06 18:38:26.655134 | ROOT | Request received for name hard.homework.fuberlin. from ('127.0.0.10', 53053)
-2020-12-06 18:38:31.658876 | ROOT | Sending answer 127.0.0.19 for fuberlin. to ('127.0.0.10', 53053)
+2020-12-11 20:51:28.918579 | ROOT | BINDING SOCKET
+2020-12-11 20:51:28.919580 | ROOT | WAITING FOR MSGS
+2020-12-11 20:52:38.128410 | ROOT | Request received for name news.router.telematik. from ('127.0.0.10', 53053)
+2020-12-11 20:52:43.140879 | ROOT | Sending answer 127.0.0.12 for telematik. to ('127.0.0.10', 53053)
+2020-12-11 20:53:18.237884 | ROOT | Request received for name medium.homework.fuberlin from ('127.0.0.10', 53053)
+2020-12-11 20:53:23.246241 | ROOT | Sending error 2 to ('127.0.0.10', 53053)
+2020-12-11 20:53:55.825855 | ROOT | Request received for name medium.homework.fuberlin from ('127.0.0.10', 53053)
+2020-12-11 20:54:00.839329 | ROOT | Sending error 2 to ('127.0.0.10', 53053)
+2020-12-11 20:56:39.431073 | ROOT | BINDING SOCKET
+2020-12-11 20:56:39.432074 | ROOT | WAITING FOR MSGS
+2020-12-11 20:57:47.432575 | ROOT | Request received for name news.router.telematik. from ('127.0.0.10', 53053)
+2020-12-11 20:57:52.446055 | ROOT | Sending answer 127.0.0.12 for telematik. to ('127.0.0.10', 53053)
+2020-12-11 20:58:17.493795 | ROOT | Request received for name medium.homework.fuberlin from ('127.0.0.10', 53053)
+2020-12-11 20:58:22.502392 | ROOT | Sending error 2 to ('127.0.0.10', 53053)
+2020-12-11 20:58:55.083094 | ROOT | Request received for name medium.homework.fuberlin from ('127.0.0.10', 53053)
+2020-12-11 20:59:00.090707 | ROOT | Sending error 2 to ('127.0.0.10', 53053)
+2020-12-11 20:59:52.785647 | ROOT | BINDING SOCKET
+2020-12-11 20:59:52.786648 | ROOT | WAITING FOR MSGS
+2020-12-11 21:01:00.994412 | ROOT | Request received for name news.router.telematik. from ('127.0.0.10', 53053)
+2020-12-11 21:01:05.997762 | ROOT | Sending answer 127.0.0.12 for telematik. to ('127.0.0.10', 53053)
+2020-12-11 21:01:41.085419 | ROOT | Request received for name medium.homework.fuberlin from ('127.0.0.10', 53053)
+2020-12-11 21:01:46.101336 | ROOT | Sending error 2 to ('127.0.0.10', 53053)
+2020-12-11 21:02:18.683243 | ROOT | Request received for name medium.homework.fuberlin from ('127.0.0.10', 53053)
+2020-12-11 21:02:23.689857 | ROOT | Sending error 2 to ('127.0.0.10', 53053)
+2020-12-11 21:03:13.663583 | ROOT | BINDING SOCKET
+2020-12-11 21:03:13.664583 | ROOT | WAITING FOR MSGS
+2020-12-11 21:03:25.343314 | ROOT | BINDING SOCKET
+2020-12-11 21:03:25.343314 | ROOT | WAITING FOR MSGS
+2020-12-11 21:04:33.975733 | ROOT | Request received for name news.router.telematik. from ('127.0.0.10', 53053)
+2020-12-11 21:04:38.989329 | ROOT | Sending answer 127.0.0.12 for telematik. to ('127.0.0.10', 53053)
+2020-12-11 21:05:14.054671 | ROOT | Request received for name medium.homework.fuberlin from ('127.0.0.10', 53053)
+2020-12-11 21:05:19.070306 | ROOT | Sending error 2 to ('127.0.0.10', 53053)
+2020-12-11 21:05:51.639858 | ROOT | Request received for name medium.homework.fuberlin from ('127.0.0.10', 53053)
+2020-12-11 21:05:56.652555 | ROOT | Sending error 2 to ('127.0.0.10', 53053)

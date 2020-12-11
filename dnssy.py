@@ -16,6 +16,9 @@ class DNS_SERVER():
 		self.authorative = authorative
 		self.bindSock()
 		self.zoneData = self.loadZones()
+		self.sent = 0
+		self.recv = 0
+		self.sleepSec = 5
 		self.run()
 
 
@@ -25,7 +28,6 @@ class DNS_SERVER():
 		#SOCK_DGRAM for UDP, SOCK_STREAM for TCP
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		self.sock.bind((self.IP, self.PORT))
-		#print(datetime.datetime.now(), self.NAME, "BINDING SOCKET")
 		self.log((self.IP, self.PORT), 0, "BINDING SOCKET")
 
 	def loadZones(self):
@@ -43,26 +45,28 @@ class DNS_SERVER():
 		return zones
 
 	def run(self):
-		"""Keep server alive until program throws error
+		"""Keep server
 		"""
-		try:
-			self.log((self.IP, self.PORT), 0, "WAITING FOR MSGS")
-			#print(datetime.datetime.now(), self.NAME, "WAITING FOR MSGS")
-			while 1:
-				# Recieve 512 bytes Max as per ietf standard, also recieve address
-				data, addr = self.sock.recvfrom(512)
-				self.log(addr, json.loads(data.decode('utf-8')), "recv")
-				#print(datetime.datetime.now(), self.NAME, "MSG RECEIVED" , data.decode('utf-8'), "from Client", addr)
-				response = self.buildResponse(json.loads(data.decode('utf-8')))
-				#Send response to sender
-				time.sleep(5)
-				#print(datetime.datetime.now(), self.NAME, "SENDING MSG", response, "to Client", addr)
+		self.log((self.IP, self.PORT), 0, "WAITING FOR MSGS")
+		while 1:
+			# Recieve 512 bytes Max as per ietf standard, also recieve address
+			data, addr = self.sock.recvfrom(512)
+			self.log(addr, json.loads(data.decode('utf-8')), "recv")
+			self.dump(addr, data.decode('utf-8'), "recv")
+			response = self.buildResponse(json.loads(data.decode('utf-8')))
+			#Send response to sender after n seconds
+			time.sleep(self.sleepSec)
+				
+			#Check for error for logging purposes
+			if(json.loads(response)["dns.flags.rcode"] != 0):
+				self.log(addr, json.loads(response), "error")
+			else:
 				self.log(addr, json.loads(response), "send")
-				self.sock.sendto(response.encode('utf-8'), addr)
-		except KeyboardInterrupt:
-			pass
-		finally:
-			self.sock.close()
+				
+			#Send answer
+			self.dump(addr, response, "send")
+			self.sock.sendto(response.encode('utf-8'), addr)
+		
 
 	def buildResponse(self, query):
 		"""Generates custom response for client
@@ -88,17 +92,21 @@ class DNS_SERVER():
 
 		#Count Answers, or rather check if answer or nahw
 		try:
+			#This triggers if the server is the parent of the target request
 			dns_name = query["dns.qry.name"]
 			self.zoneData[dns_name]
-			response.update({"dns.count.answers": 1, "dns.name": dns_name, "dns.a": self.zoneData[dns_name]["A"], "dns.resp.ttl": self.zoneData[dns_name]["TTL"]})
+			response.update({"dns.count.answers": 1, "dns.ns": dns_name, "dns.a": self.zoneData[dns_name]["A"], "dns.resp.ttl": self.zoneData[dns_name]["TTL"]})
+
 		except KeyError:
 			# We didn't find any answer, so we look for a redirect we can give
-			response.update({"dns.count.answers": 0, 
-				"dns.flags.authoritative": 0})
+			response.update({"dns.count.answers": 0})
+
 			#Suffix matching
 			suffix = self.biggestSuffix(query["dns.qry.name"])
+
+			# Make sure we really don't have any answers, but we have a suffix, return said suffix
 			if not response["dns.count.answers"] and suffix:
-				response.update({"dns.count_auth_rr": 1, "dns.name": suffix, "dns.a": self.zoneData[suffix]["A"], "dns.resp.ttl": self.zoneData[suffix]["TTL"]})
+				response.update({"dns.count_auth_rr": 1, "dns.ns": suffix, "dns.a": self.zoneData[suffix]["A"], "dns.resp.ttl": self.zoneData[suffix]["TTL"]})
 			else:
 				# Check if we are authorative
 				if self.authorative:
@@ -108,34 +116,83 @@ class DNS_SERVER():
 					#Cant process query
 					response["dns.flags.rcode"] = 2
 
-
 		return json.dumps(response, indent=4)
 
 
 	def log(self, addr, data, logtype):
+		"""Write to logfile
+
+		Args:
+			addr (tuple): Information about the target server
+			data (dict): Dictonary with data
+			logtype (str): describes what kinda log we have
+		"""
+
 		typeString = ""
+		#else if else if else if else if
 		if(logtype == "recv"):
 			typeString = "Request received for name " + data["dns.qry.name"] + " from " + str(addr)
 		elif(logtype == "send"):
-			typeString = "Sending answer " + data["dns.a"] + " for " + data["dns.name"] + " to " + str(addr)
+			typeString = "Sending answer " + data["dns.a"] + " for " + data["dns.ns"] + " to " + str(addr)
+		elif(logtype == "error"):
+			typeString = "Sending error " + str(data["dns.flags.rcode"]) + " to " + str(addr)
 		else:
 			typeString = logtype
 
 		logString = str(datetime.datetime.now()) + " | " + self.NAME + " | " + typeString + "\n"
 		
+		# Make sure we have a logfiles folder
 		if not os.path.exists('logfiles'):
 			os.makedirs('logfiles')
+
+		#Make sure we have a NAME.log file and write to it
+		name = self.NAME
+		if self.NAME[-1] == ".":
+			name = self.NAME[0:-1]
+		try:
+			with open('logfiles/%s.log' % name, "a") as logfile:
+				logfile.write(logString)
+		except IOError:
+			with open('logfiles/%s' % name, "w+") as logfile:
+				logfile.write(logString)
+
+	def dump(self, addr, data, dumptype):
+		"""Basically the log function with extra steps
+
+		Args:
+			addr (tuple): Information about the target server
+			data (dict): the transferred data
+			dumptype (str): Description about what type of dump we do
+		"""
+
+		typeString = ""
+		# Dump only captures transferred packets, and it counts how many querys the current instance processed!
+		if(dumptype == "recv"):
+			typeString = "RECIEVED MSG NR(" + str(self.sent) + ")" + data + " from " + str(addr)
+			self.recv += 1
+		elif(dumptype == "send"):
+			self.sent += 1
+			typeString = "SENDING MSG NR(" + str(self.sent) + ")" + data + " to " + str(addr)
+		else:
+			typeString = dumptype
+
+		dumpString = str(datetime.datetime.now()) + " | " + self.NAME + " | " + typeString + "\n"
+		
+		# Same as log. Make sure dumps and SERVER.dump exists and write into it
+		if not os.path.exists('dumps'):
+			os.makedirs('dumps')
+			
 		name = self.NAME
 		if self.NAME[-1] == ".":
 			name = self.NAME[0:-1]
 		try:
 		
-			with open('logfiles/%s.log' % name, "a") as logfile:
-				logfile.write(logString)
+			with open('dumps/%s.dump' % name, "a") as dumpfile:
+				dumpfile.write(dumpString)
 				
 		except IOError:
-			with open('logfiles/%s' % name, "w+") as logfile:
-				logfile.write(logString)
+			with open('dumps/%s' % name, "w+") as dumpfile:
+				dumpfile.write(dumpString)
 
 	def biggestSuffix(self, domain):
 		"""Looks through zones to find the biggest redirect we can give

@@ -1,1 +1,0 @@
-To execute all servers just run `main.py` after that execute `resolver.py` and `stubby.py` and you're set

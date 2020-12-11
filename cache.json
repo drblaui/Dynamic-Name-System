@@ -1,17 +1,12 @@
 {
-    "fuberlin.": {
-        "A": "127.0.0.19",
+    "router.telematik.": {
+        "A": "127.0.0.16",
         "TTL": 400,
-        "dieTime": 1607276711
+        "dieTime": 1607717489
     },
-    "homework.fuberlin.": {
-        "A": "127.0.0.20",
-        "TTL": 400,
-        "dieTime": 1607276721
-    },
-    "hard.homework.fuberlin.": {
-        "A": "127.0.0.22",
-        "TTL": 3400,
-        "dieTime": 1607279731
+    "news.router.telematik.": {
+        "A": "127.0.0.17",
+        "TTL": 100,
+        "dieTime": 1607717199
     }
 }
