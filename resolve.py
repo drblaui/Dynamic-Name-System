@@ -172,28 +172,36 @@ class RESOLVER():
 		data, addr = self.listen()
 		data = json.loads(data.decode('utf-8'))
 
+		if "dns.ns" in data and "dns.resp.ttl" in data:
+			print(data["dns.ns"])
+			dieTime = int(time.time() + data["dns.resp.ttl"])
+			newServer = {"A": data["dns.a"], "TTL": data["dns.resp.ttl"], "dieTime": dieTime, "dieTimeHR":  time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(dieTime))}
+			self.cache[data["dns.ns"]] = newServer
+			self.overwriteCache(self.cache)
+
 		# Error handling
 		if data["dns.flags.rcode"] == 2:
 			return "Error " + str(data["dns.flags.rcode"]) + " Server failure - The name server was unable to process this query due to a problem with the name server"
 		elif data["dns.flags.rcode"] == 3:
 			return "Error " + str(data["dns.flags.rcode"]) + " Name Error - The server seems to understand your query, but refuses to answer it or it doesn't have any entries for your query"
-		
+	
+		# Could also be done with "dns.count_auth_rr" in data, but I forgot about basic python syntax
 		try:
 			# we have a reroute
 			data["dns.count_auth_rr"]
 			#static data for requests
 			exampleData = json.dumps({"dns.flags.response": 0, "dns.flags.recdesired": 1, "dns.qry.name": data["dns.qry.name"], "dns.qry.type": data["dns.qry.type"]}, indent=4)
 			# Caching
-			newServer = {"A": data["dns.a"], "TTL": data["dns.resp.ttl"], "dieTime": int(time.time()) + data["dns.resp.ttl"]}
-			self.cache[data["dns.ns"]] = newServer
-			self.overwriteCache(self.cache)
+			#newServer = {"A": data["dns.a"], "TTL": data["dns.resp.ttl"], "dieTime": int(time.time()) + data["dns.resp.ttl"]}
+			#self.cache[data["dns.ns"]] = newServer
+			#self.overwriteCache(self.cache)
 			# Let's just say every server has the same port
 			return self.getResponse(exampleData.encode('utf-8'), (data["dns.a"], self.PORT))
 		except KeyError:
 			# We got an answer! Cache it and return
-			newServer = {"A": data["dns.a"], "TTL": data["dns.resp.ttl"], "dieTime": int(time.time()) + data["dns.resp.ttl"]}
-			self.cache[data["dns.ns"]] = newServer
-			self.overwriteCache(self.cache)
+			#newServer = {"A": data["dns.a"], "TTL": data["dns.resp.ttl"], "dieTime": int(time.time()) + data["dns.resp.ttl"]}
+			#self.cache[data["dns.ns"]] = newServer
+			#self.overwriteCache(self.cache)
 
 			return data["dns.a"]
 
