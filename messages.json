@@ -1,0 +1,34 @@
+{
+    "resolver": {
+        "sent": 0,
+        "recv": 0
+    },
+    "ROOT": {
+        "sent": 0,
+        "recv": 0
+    },
+    "fuberlin": {
+        "sent": 0,
+        "recv": 0
+    },
+    "homework.fuberlin": {
+        "sent": 0,
+        "recv": 0
+    },
+    "pcpools.fuberlin": {
+        "sent": 0,
+        "recv": 0
+    },
+    "telematik": {
+        "sent": 0,
+        "recv": 0
+    },
+    "switch.telematik": {
+        "sent": 0,
+        "recv": 0
+    },
+    "router.telematik": {
+        "sent": 0,
+        "recv": 0
+    }
+}

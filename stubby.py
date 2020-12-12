@@ -53,7 +53,7 @@ class STUB:
 		query = self.buildQuery(domain, 1, 1)
 		self.send(query, ip, port)
 		self.listen()
-		domain = "medium.homework.fuberlin"
+		domain = "medium.homework.fuberlin."
 		self.connect(ip, port)
 		query = self.buildQuery(domain, 1, 1)
 		self.send(query, ip, port)
@@ -67,7 +67,7 @@ class STUB:
 		query = self.buildQuery(domain, 1, 1)
 		self.send(query, ip, port)
 		self.listen()
-		domain = "medium.homework.fuberlin"
+		domain = "medium.homework.fuberlin."
 		self.connect(ip, port)
 		query = self.buildQuery(domain, 1, 1)
 		self.send(query, ip, port)

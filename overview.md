@@ -6,7 +6,7 @@ As you can see, right now we have 4 Python files `dnssy.py`, `resolve.py`, `stub
 
 - `dnssy.py`
 	- A skeleton for all 7 DNS Servers. It provides basic functionality, like loading in it's zones, receiving requests and answering accordingly. All Servers will create a Log and Dumpfile which will be saved in a logfiles and dumps folder respectively. Logfiles will give short little information about what is going on right now. So they only contain important information. However dumpfiles will contain the full received/sent message.
-	> Tip: Create your own DNS Server by adding a zone file and another line to `run.py`!
+	> Tip: Create your own DNS Server by adding a zone file, an entry in `messages.json` and another line to `run.py`!
 - `resolve.py`
 	- The recursive resolver. It receives a message from our stub and gives an answer by either checking it's cache or by iterating over the nameservers until it either get's a fulfilling answer or an error
 	> Tip: The resolver also generates a log and dumpfile similar to the DNS Servers. You can find the logfile after running `run.py` under `logs/resolver.log` and the dumpfile after the resolver received it's first request under `dumps/resolver.dump`
@@ -25,6 +25,7 @@ As you can see, right now we have 4 Python files `dnssy.py`, `resolve.py`, `stub
 	- The file that executes it all! `run.py` will open two python console windows. One will be left blank, because we couldn't solve it any different. The other one will open an instance of `stubby.py` that window is where the magic happens!
 	> Note: We thought about hiding the first console window, but then you'd have to kill the python process to stop the servers
 
+You may also notice the `messages.json` file. This is just for globally tracking message numbers, even if the server restarts
 # What works, what does not?
 As far as milestones go, every one except (d) is implemented and should work about 95%. 
 
@@ -35,8 +36,6 @@ Milestone (b) and (c) also work because of `resolve.py`, which resolves requests
 
 ## What doesn't work
 It is quite possible, that Nameservers deliver an error, when they shouldn't, because our suffix matching has a little error margin.
-
-Results will only be cached if we have a successful query. We do not know what causes this
 
 The proxy (and thus all dns.srv.* keys) are not implemented at all, mainly because we didn't really find the right way to access this problem, so we left it out.
 

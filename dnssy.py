@@ -16,10 +16,29 @@ class DNS_SERVER():
 		self.authorative = authorative
 		self.bindSock()
 		self.zoneData = self.loadZones()
-		self.sent = 0
-		self.recv = 0
+		self.sent = self.getMessages("sent")
+		self.recv = self.getMessages("recv")
 		self.sleepSec = 5
 		self.run()
+
+	def getMessages(self, message):
+		name = self.NAME
+		if self.NAME[-1] == ".":
+			name = self.NAME[0:-1]
+		with open("messages.json", "r") as jsonfile:
+			data = json.load(jsonfile)
+			return data[name][message]
+
+	def updateMessages(self, message):
+		name = self.NAME
+		if self.NAME[-1] == ".":
+			name = self.NAME[0:-1]
+		with open("messages.json", "r+") as jsonfile:
+			data = json.load(jsonfile)
+			data[name][message] += 1
+			jsonfile.seek(0)
+			json.dump(data, jsonfile, indent=4)
+			jsonfile.truncate()
 
 
 	def bindSock(self):
@@ -131,13 +150,21 @@ class DNS_SERVER():
 		typeString = ""
 		#else if else if else if else if
 		if(logtype == "recv"):
-			typeString = "Request received for name " + data["dns.qry.name"] + " from " + str(addr)
+			self.recv += 1
+			self.updateMessages("recv")
+			typeString = "Request received for name " + data["dns.qry.name"] + " from " + str(addr) + " [RECEIVED MESSAGE #" + str(self.recv) + "]"
 		elif(logtype == "send"):
-			typeString = "Sending answer " + data["dns.a"] + " for " + data["dns.ns"] + " to " + str(addr)
+			self.sent += 1
+			self.updateMessages("sent")
+			typeString = "Sending answer " + data["dns.a"] + " for " + data["dns.ns"] + " to " + str(addr) + " [SENT MESSAGE #" + str(self.sent) + "]"
 		elif(logtype == "error"):
-			typeString = "Sending error " + str(data["dns.flags.rcode"]) + " to " + str(addr)
+			self.sent += 1
+			self.updateMessages("sent")
+			typeString = "Sending error " + str(data["dns.flags.rcode"]) + " to " + str(addr) + " [SENT MESSAGE #" + str(self.sent) + "]"
 		else:
-			typeString = logtype
+			self.sent += 1
+			self.updateMessages("sent")
+			typeString = logtype + " [SENT MESSAGE #" + str(self.sent) + "]"
 
 		logString = str(datetime.datetime.now()) + " | " + self.NAME + " | " + typeString + "\n"
 		
@@ -168,15 +195,13 @@ class DNS_SERVER():
 		typeString = ""
 		# Dump only captures transferred packets, and it counts how many querys the current instance processed!
 		if(dumptype == "recv"):
-			typeString = "RECIEVED MSG NR(" + str(self.sent) + ")" + data + " from " + str(addr)
-			self.recv += 1
+			typeString = "RECIEVED MSG " + str(self.recv) + ")" + data + " from " + str(addr)
 		elif(dumptype == "send"):
-			self.sent += 1
-			typeString = "SENDING MSG NR(" + str(self.sent) + ")" + data + " to " + str(addr)
+			typeString = "SENDING MSG " + str(self.sent) + ")" + data + " to " + str(addr)
 		else:
 			typeString = dumptype
 
-		dumpString = str(datetime.datetime.now()) + " | " + self.NAME + " | " + typeString + "\n"
+		dumpString = str(datetime.datetime.now()) + " | " + self.NAME + " | " + typeString + "\n \n"
 		
 		# Same as log. Make sure dumps and SERVER.dump exists and write into it
 		if not os.path.exists('dumps'):

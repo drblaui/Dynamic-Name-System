@@ -13,8 +13,26 @@ class RESOLVER():
 		self.root = ("127.0.0.11", self.PORT)
 		self.bindSock()
 		self.loadOrCreateCache()
+		self.sent = self.getMessages("sent")
+		self.recv = self.getMessages("recv")
 		self.sleepSec = 5
 		self.run()
+
+
+	def getMessages(self, message):
+		name = "resolver"
+		with open("messages.json", "r") as jsonfile:
+			data = json.load(jsonfile)
+			return data[name][message]
+
+	def updateMessages(self, message):
+		name = "resolver"
+		with open("messages.json", "r+") as jsonfile:
+			data = json.load(jsonfile)
+			data[name][message] += 1
+			jsonfile.seek(0)
+			json.dump(data, jsonfile, indent=4)
+			jsonfile.truncate()
 
 	def loadOrCreateCache(self):
 		"""Checks if we already have a cache and loads it into memory
@@ -172,18 +190,13 @@ class RESOLVER():
 		data, addr = self.listen()
 		data = json.loads(data.decode('utf-8'))
 
+		# Cache result
 		if "dns.ns" in data and "dns.resp.ttl" in data:
-			print(data["dns.ns"])
 			dieTime = int(time.time() + data["dns.resp.ttl"])
 			newServer = {"A": data["dns.a"], "TTL": data["dns.resp.ttl"], "dieTime": dieTime, "dieTimeHR":  time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(dieTime))}
 			self.cache[data["dns.ns"]] = newServer
 			self.overwriteCache(self.cache)
 
-		# Error handling
-		if data["dns.flags.rcode"] == 2:
-			return "Error " + str(data["dns.flags.rcode"]) + " Server failure - The name server was unable to process this query due to a problem with the name server"
-		elif data["dns.flags.rcode"] == 3:
-			return "Error " + str(data["dns.flags.rcode"]) + " Name Error - The server seems to understand your query, but refuses to answer it or it doesn't have any entries for your query"
 	
 		# Could also be done with "dns.count_auth_rr" in data, but I forgot about basic python syntax
 		try:
@@ -191,34 +204,45 @@ class RESOLVER():
 			data["dns.count_auth_rr"]
 			#static data for requests
 			exampleData = json.dumps({"dns.flags.response": 0, "dns.flags.recdesired": 1, "dns.qry.name": data["dns.qry.name"], "dns.qry.type": data["dns.qry.type"]}, indent=4)
-			# Caching
-			#newServer = {"A": data["dns.a"], "TTL": data["dns.resp.ttl"], "dieTime": int(time.time()) + data["dns.resp.ttl"]}
-			#self.cache[data["dns.ns"]] = newServer
-			#self.overwriteCache(self.cache)
+		
 			# Let's just say every server has the same port
 			return self.getResponse(exampleData.encode('utf-8'), (data["dns.a"], self.PORT))
 		except KeyError:
-			# We got an answer! Cache it and return
-			#newServer = {"A": data["dns.a"], "TTL": data["dns.resp.ttl"], "dieTime": int(time.time()) + data["dns.resp.ttl"]}
-			#self.cache[data["dns.ns"]] = newServer
-			#self.overwriteCache(self.cache)
-
-			return data["dns.a"]
+			# We got an answer or an error
+			
+			# Error handling
+			if data["dns.flags.rcode"] == 2:
+				return "Error " + str(data["dns.flags.rcode"]) + " Server failure - The name server was unable to process this query due to a problem with the name server"
+			elif data["dns.flags.rcode"] == 3:
+				return "Error " + str(data["dns.flags.rcode"]) + " Name Error - The server seems to understand your query, but refuses to answer it or it doesn't have any entries for your query"
+			else:
+				# Actual result
+				return data["dns.a"]
 
 	def log(self, addr, data, logtype):
 		"""Look into dnssy.py for explanation
 		"""
 		typeString = ""
 		if(logtype == "recv"):
-			typeString = "Request received for name " + data["dns.qry.name"] + " from " + str(addr)
+			self.recv += 1
+			self.updateMessages("recv")
+			typeString = "Request received for name " + data["dns.qry.name"] + " from " + str(addr) + " [RECEIVED MESSAGE #" + str(self.sent) + "]"
 		elif(logtype == "send"):
-			typeString = "Sending answer " + data["dns.a"] + " for " + data["dns.ns"] + " to " + str(addr)
+			self.sent += 1
+			self.updateMessages("sent")
+			typeString = "Sending answer " + data["dns.a"] + " for " + data["dns.ns"] + " to " + str(addr) + " [SENT MESSAGE #" + str(self.sent) + "]"
 		elif(logtype == "ask"):
-			typeString = "Sending request for " + data["dns.qry.name"]  + " to " + str(addr)
+			self.sent += 1
+			self.updateMessages("sent")
+			typeString = "Sending request for " + data["dns.qry.name"]  + " to " + str(addr) + " [SENT MESSAGE #" + str(self.sent) + "]"
 		elif(logtype == "error"):
-			typeString = "Sending error " + str(data["dns.flags.rcode"]) + " to " + str(addr)
+			self.sent += 1
+			self.updateMessages("sent")
+			typeString = "Sending error " + str(data["dns.flags.rcode"]) + " to " + str(addr) + " [SENT MESSAGE #" + str(self.sent) + "]"
 		else:
-			typeString = "Sending " + logtype + " as answer to " + str(addr)
+			self.sent += 1
+			self.updateMessages("sent")
+			typeString = "Sending " + logtype + " as answer to " + str(addr) + " [SENT MESSAGE #" + str(self.sent) + "]"
 
 		logString = str(datetime.datetime.now()) + " | RESOLVER | " + typeString + "\n"
 		
@@ -245,7 +269,7 @@ class RESOLVER():
 		else:
 			typeString = "SENDING MSG " + dumptype + " to " + str(addr)
 
-		dumpString = str(datetime.datetime.now()) + " | RESOLVER | " + typeString + "\n"
+		dumpString = str(datetime.datetime.now()) + " | RESOLVER | " + typeString + "\n \n"
 		
 		if not os.path.exists('dumps'):
 			os.makedirs('dumps')
