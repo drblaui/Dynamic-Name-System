@@ -2,3 +2,4 @@ __pycache__/
 logfiles/
 dumps/
 cache.json
+updateRoot.py
