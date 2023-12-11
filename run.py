@@ -1,6 +1,7 @@
 from multiprocessing import Process
 import dnssy, resolve, os
 
+
 #This probably could've been done prettier, but "what the user doesn't see, can be spaghett-ee"
 
 def createServer(ip, name, auth):

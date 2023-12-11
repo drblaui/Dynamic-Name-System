@@ -56,7 +56,7 @@ class RESOLVER():
 		"""
 		self.log((self.IP, self.PORT), 0, "WAITING FOR MSGS")
 		while 1:
-			# Recieve 512 bytes Max as per ietf standard, also recieve address
+			# Receive 512 bytes Max as per IETF standard, also receive address
 			data, addr = self.sock.recvfrom(512)
 			self.log(addr, json.loads(data.decode('utf-8')), "recv")
 			self.dump(addr, data.decode('utf-8'), "recv")
@@ -263,7 +263,7 @@ class RESOLVER():
 		"""
 		typeString = ""
 		if(dumptype == "recv"):
-			typeString = "RECIEVED MSG " + data + " from " + str(addr)
+			typeString = "RECEIVED MSG " + data + " from " + str(addr)
 		elif(dumptype == "send"):
 			typeString = "SENDING MSG " + data + " to " + str(addr)
 		else:

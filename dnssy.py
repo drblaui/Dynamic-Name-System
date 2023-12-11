@@ -1,19 +1,19 @@
 import socket, glob, json, datetime, time, os
 
 class DNS_SERVER():
-	def __init__(self, ip, server_name, authorative, port=53053):
+	def __init__(self, ip, server_name, authoritative, port=53053):
 		"""Create a DNS Server
 
 		Args:
 			ip (str): The IP the server should listen to in range from 127.0.0.10 to 127.0.0.100
 			port (int): The Server port, default = 53053
 			server_name (str): Name of server, should be the same as its root file
-			authorative (boolean): Can give authorative answers or not
+			authoritative (boolean): Can give authoritative answers or not
 		"""
 		self.PORT = port
 		self.IP = ip
 		self.NAME = server_name
-		self.authorative = authorative
+		self.authoritative = authoritative
 		self.bindSock()
 		self.zoneData = self.loadZones()
 		self.sent = self.getMessages("sent")
@@ -53,7 +53,7 @@ class DNS_SERVER():
 		"""Load zone file corresponding to Server name
 
 		Returns:
-			dict: zone file as dictonary/JSON
+			dict: zone file as dictionary/JSON
 		"""
 		zones = {}
 		name = self.NAME
@@ -68,7 +68,7 @@ class DNS_SERVER():
 		"""
 		self.log((self.IP, self.PORT), 0, "WAITING FOR MSGS")
 		while 1:
-			# Recieve 512 bytes Max as per ietf standard, also recieve address
+			# Receive 512 bytes Max as per IETF standard, also receive address
 			data, addr = self.sock.recvfrom(512)
 			self.log(addr, json.loads(data.decode('utf-8')), "recv")
 			self.dump(addr, data.decode('utf-8'), "recv")
@@ -104,10 +104,10 @@ class DNS_SERVER():
 			"dns.qry.type": query["dns.qry.type"],
 			"dns.flags.rcode": 0}
 
-		if(self.authorative):
-			response.update({"dns.flags.authorative": 1})
+		if(self.authoritative):
+			response.update({"dns.flags.authoritative": 1})
 		else:
-			response.update({"dns.flags.authorative": 0})
+			response.update({"dns.flags.authoritative": 0})
 
 		#Count Answers, or rather check if answer or nahw
 		try:
@@ -127,8 +127,8 @@ class DNS_SERVER():
 			if not response["dns.count.answers"] and suffix:
 				response.update({"dns.count_auth_rr": 1, "dns.ns": suffix, "dns.a": self.zoneData[suffix]["A"], "dns.resp.ttl": self.zoneData[suffix]["TTL"]})
 			else:
-				# Check if we are authorative
-				if self.authorative:
+				# Check if we are authoritative
+				if self.authoritative:
 					#Name error
 					response["dns.flags.rcode"] = 3
 				else:
@@ -143,7 +143,7 @@ class DNS_SERVER():
 
 		Args:
 			addr (tuple): Information about the target server
-			data (dict): Dictonary with data
+			data (dict): Dictionary with data
 			logtype (str): describes what kinda log we have
 		"""
 
@@ -193,9 +193,9 @@ class DNS_SERVER():
 		"""
 
 		typeString = ""
-		# Dump only captures transferred packets, and it counts how many querys the current instance processed!
+		# Dump only captures transferred packets, and it counts how many queries the current instance processed!
 		if(dumptype == "recv"):
-			typeString = "RECIEVED MSG " + str(self.recv) + ")" + data + " from " + str(addr)
+			typeString = "RECEIVED MSG " + str(self.recv) + ")" + data + " from " + str(addr)
 		elif(dumptype == "send"):
 			typeString = "SENDING MSG " + str(self.sent) + ")" + data + " to " + str(addr)
 		else:

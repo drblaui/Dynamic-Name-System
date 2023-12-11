@@ -7,7 +7,7 @@ class STUB:
 		"""
 		#DGRAM for UDP
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		#Querys that take longer than 60 seconds to get a answer will be ignored
+		#Queries that take longer than 60 seconds to get a answer will be ignored
 		self.sock.settimeout(60)
 		self.run()
 
@@ -40,7 +40,7 @@ class STUB:
 		self.send(query, ip, port)
 		self.listen()
 		self.say("Look into dns.flags.rcode you'll see, we have an rcode from 3. So the server understood what our query was, but just refused to give us any information. How rude!")
-		self.say("Well at least, we know we can ask authorative Servers directly")
+		self.say("Well at least, we know we can ask authoritative Servers directly")
 		self.say("By the way: did you know you can ask them too? Just ask me 'request @IP -p PORT' with what you're looking for!")
 		self.say("Let's move on, shall we?")
 		self.say("INITIATING TEST SEQUENCE FOR MILESTONE (B)")
@@ -161,10 +161,10 @@ class STUB:
 		self.say("I'm asking %s:%s for %s" %(ip,port,data), False)
 		#Don't forget to encode!
 		self.sock.send(data.encode('utf-8'))
-		self.say("I've sucessfully transmitted your data!", False)
+		self.say("I've successfully transmitted your data!", False)
 
 	def listen(self):
-		"""Wait for resopnse
+		"""Wait for response
 		"""
 		self.say("Let's wait for the response!", False)
 		try:
