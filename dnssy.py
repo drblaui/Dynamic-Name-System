@@ -16,7 +16,6 @@ class DNS_SERVER():
 		self.authoritative = authoritative
 		self.bindSock()
 		self.zoneData = self.loadZones()
-		print("foo")
 		self.sent = self.getMessages("sent")
 		self.recv = self.getMessages("recv")
 		self.sleepSec = 5
