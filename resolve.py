@@ -11,11 +11,11 @@ class RESOLVER():
 		self.PORT = port
 		self.IP = ip
 		self.root = ("127.0.0.11", self.PORT)
-		self.bindSock()
 		self.loadOrCreateCache()
 		self.sent = self.getMessages("sent")
 		self.recv = self.getMessages("recv")
 		self.sleepSec = 5
+		self.bindSock()
 		self.run()
 
 

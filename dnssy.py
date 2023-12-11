@@ -14,11 +14,11 @@ class DNS_SERVER():
 		self.IP = ip
 		self.NAME = server_name
 		self.authoritative = authoritative
-		self.bindSock()
-		self.zoneData = self.loadZones()
 		self.sent = self.getMessages("sent")
 		self.recv = self.getMessages("recv")
 		self.sleepSec = 5
+		self.bindSock()
+		self.zoneData = self.loadZones()
 		self.run()
 
 	def getMessages(self, message):
